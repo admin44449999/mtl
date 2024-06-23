@@ -306,7 +306,7 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
 
     if isBulk:
         try:
-            bulk = await extract_bulk_links(message, bulk_start, bulk_end)
+            bulk = await extract_bulk_links(message, bulk_start, bulk_end,link)
             if len(bulk) == 0:
                 raise ValueError('Bulk Empty!')
         except Exception as e:
