@@ -309,8 +309,9 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
             bulk = await extract_bulk_links(message, bulk_start, bulk_end)
             if len(bulk) == 0:
                 raise ValueError('Bulk Empty!')
-        except:
-            await sendMessage(message, 'Reply to text file or tg message that have links seperated by new line!')
+        except Exception as e:
+            LOGGER.error(str(e))
+            await sendMessage(message, 'please check text file # edited')
             return
         b_msg = input_list[:1]
         b_msg.append(f'{bulk[0]} -i {len(bulk)}')
