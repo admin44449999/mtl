@@ -287,7 +287,6 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
     bulk_end    = 0
     thumb       = args['-t'] or args['-thumb']
     sshots      = int(ss) if (ss := (args['-ss'] or args['-screenshots'])).isdigit() else 0
-    
 
     if not isinstance(isBulk, bool):
         dargs = isBulk.split(':')
@@ -295,7 +294,7 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
         if len(dargs) == 2:
             bulk_end = dargs[1] or None
         isBulk = True
-        
+
     if drive_id and is_gdrive_link(drive_id):
         drive_id = GoogleDriveHelper.getIdFromUrl(drive_id)
 
@@ -362,7 +361,6 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
 
     user_dict = user_data.get(user_id, {})
 
-
     opt = opt or user_dict.get('yt_opt') or config_dict['YT_DLP_OPTIONS']
     
     if username := message.from_user.username:
@@ -397,15 +395,11 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
         return
 
     if not isLeech:
-        user_id = message.from_user.id
-        user_dict = user_data.get(user_id, {})
-        du = user_dict.get('du_opt') or config_dict['DEFAULT_UPLOAD']
-
-        if du == 'rc' and not up or up == 'rc':
+        if config_dict['DEFAULT_UPLOAD'] == 'rc' and not up or up == 'rc':
             up = config_dict['RCLONE_PATH']
-        elif du == 'ddl' and not up or up == 'ddl':
+        elif config_dict['DEFAULT_UPLOAD'] == 'ddl' and not up or up == 'ddl':
             up = 'ddl'
-        if not up and du == 'gd':
+        if not up and config_dict['DEFAULT_UPLOAD'] == 'gd':
             up = 'gd'
             user_tds = await fetch_user_tds(message.from_user.id)
             if not drive_id and gd_cat:
@@ -433,9 +427,9 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
             return
         elif up not in ['rcl', 'gd', 'ddl']:
             if up.startswith('mrcc:'):
-                config_path = f'rclone/{message.from_user.id}.conf'
+                config_path = f'wcl/{message.from_user.id}.conf'
             else:
-                config_path = 'rclone.conf'
+                config_path = 'wcl.conf'
             if not await aiopath.exists(config_path):
                 await sendMessage(message, f'Rclone Config: {config_path} not Exists!')
                 await delete_links(message)
@@ -470,6 +464,7 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
             return
 
     listener = MirrorLeechListener(message, compress, isLeech=isLeech, tag=tag, sameDir=sameDir, rcFlags=rcf, upPath=up, drive_id=drive_id, index_link=index_link, isYtdlp=True, source_url=link, leech_utils={'screenshots': sshots, 'thumb': thumb})
+
 
     if 'mdisk.me' in link:
         name, link = await _mdisk(link, name)
